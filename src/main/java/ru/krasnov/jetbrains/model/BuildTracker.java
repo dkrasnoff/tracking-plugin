@@ -2,7 +2,6 @@ package ru.krasnov.jetbrains.model;
 
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.ToString;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.Serializable;
@@ -21,7 +20,6 @@ public class BuildTracker implements Serializable {
 
     public BuildTracker(List<String> requestedTaskNames,
                         LocalDateTime buildStartTimestamp) {
-        System.out.println("CREATING NEW BuildTracker");
         this.requestedTaskNames = List.copyOf(requestedTaskNames);
         this.buildStartTimestamp = buildStartTimestamp;
         this.executedTasks = new CopyOnWriteArrayList<>();
@@ -35,6 +33,9 @@ public class BuildTracker implements Serializable {
         executedTasks.add(task);
     }
 
+    /**
+     * @return immutable copy of inner executed tasks list
+     */
     public List<ExecutedTask> getExecutedTasks() {
         return List.copyOf(executedTasks);
     }

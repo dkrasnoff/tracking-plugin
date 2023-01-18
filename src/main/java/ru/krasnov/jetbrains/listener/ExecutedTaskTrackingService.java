@@ -26,16 +26,16 @@ public abstract class ExecutedTaskTrackingService
         if (getParameters().getBuildTracker().isPresent()) {
             getParameters().getBuildTracker()
                     .get()
-                    .getExecutedTasks()
-                    .add(new ExecutedTask(
-                            event.getDisplayName(),
-                            LocalDateTime.ofInstant(
-                                    Instant.ofEpochMilli(event.getResult().getStartTime()),
-                                    ZoneOffset.systemDefault()),
-                            LocalDateTime.ofInstant(
-                                    Instant.ofEpochMilli(event.getResult().getEndTime()),
-                                    ZoneOffset.systemDefault())
-                    ));
+                    .addNewExecutedTask(
+                            new ExecutedTask(
+                                    event.getDescriptor().getName(),
+                                    LocalDateTime.ofInstant(
+                                            Instant.ofEpochMilli(event.getResult().getStartTime()),
+                                            ZoneOffset.systemDefault()),
+                                    LocalDateTime.ofInstant(
+                                            Instant.ofEpochMilli(event.getResult().getEndTime()),
+                                            ZoneOffset.systemDefault())
+                            ));
         }
     }
 }

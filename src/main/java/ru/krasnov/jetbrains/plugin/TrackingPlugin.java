@@ -4,6 +4,9 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.invocation.BuildInvocationDetails;
 import org.gradle.build.event.BuildEventsListenerRegistry;
+import ru.krasnov.jetbrains.configuration.HttpConfiguration;
+import ru.krasnov.jetbrains.configuration.ObjectMapperConfiguration;
+import ru.krasnov.jetbrains.dispatcher.HttpDispatcher;
 import ru.krasnov.jetbrains.listener.BuildFinishListener;
 import ru.krasnov.jetbrains.listener.ExecutedTaskTrackingService;
 import ru.krasnov.jetbrains.model.BuildTracker;
@@ -53,7 +56,13 @@ public class TrackingPlugin implements Plugin<Project> {
     }
 
     private void addBuildFinishedListener(Project project, BuildTracker buildTracker) {
-        project.getGradle().addBuildListener(new BuildFinishListener(buildTracker));
+        project.getGradle().addBuildListener(
+                new BuildFinishListener(
+                        buildTracker,
+                        new HttpDispatcher(
+                                ObjectMapperConfiguration.getDefaultObjectMapper(),
+                                HttpConfiguration.getDefaultHttpClient()
+                        )));
     }
 
 }
