@@ -7,6 +7,7 @@ import org.gradle.build.event.BuildEventsListenerRegistry;
 import ru.krasnov.jetbrains.configuration.HttpConfiguration;
 import ru.krasnov.jetbrains.configuration.ObjectMapperConfiguration;
 import ru.krasnov.jetbrains.dispatcher.HttpDispatcher;
+import ru.krasnov.jetbrains.extension.PluginParametersExtension;
 import ru.krasnov.jetbrains.listener.BuildFinishListener;
 import ru.krasnov.jetbrains.listener.ExecutedTaskTrackingService;
 import ru.krasnov.jetbrains.model.BuildTracker;
@@ -19,6 +20,8 @@ import java.time.ZoneOffset;
 public class TrackingPlugin implements Plugin<Project> {
 
     public static final String EXECUTED_TASK_TRACKING_SERVICE_NAME = "executedTaskTrackingService";
+    public static final String PLUGIN_PARAMETERS_EXTENSION_NAME = "trackingPlugin";
+
     private final BuildEventsListenerRegistry buildEventsListenerRegistry;
     private final BuildInvocationDetails buildInvocationDetails;
 
@@ -31,10 +34,19 @@ public class TrackingPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
+
+        final var pluginParameters = getPluginParametersExtensionExtensions(project);
+
         final var startParameter = project.getGradle().getStartParameter();
         final var buildTracker = new BuildTracker(startParameter.getTaskNames(), getBuildStartTimestamp());
+
         addExecutedTaskTrackingServiceListener(project, buildTracker);
-        addBuildFinishedListener(project, buildTracker);
+        addBuildFinishedListener(project, buildTracker, pluginParameters);
+    }
+
+    private static PluginParametersExtension getPluginParametersExtensionExtensions(Project project) {
+        return project.getExtensions()
+                .create(PLUGIN_PARAMETERS_EXTENSION_NAME, PluginParametersExtension.class);
     }
 
     private LocalDateTime getBuildStartTimestamp() {
@@ -55,14 +67,16 @@ public class TrackingPlugin implements Plugin<Project> {
         buildEventsListenerRegistry.onTaskCompletion(customService);
     }
 
-    private void addBuildFinishedListener(Project project, BuildTracker buildTracker) {
+    private void addBuildFinishedListener(Project project,
+                                          BuildTracker buildTracker,
+                                          PluginParametersExtension pluginParameters) {
         project.getGradle().addBuildListener(
                 new BuildFinishListener(
                         buildTracker,
                         new HttpDispatcher(
                                 ObjectMapperConfiguration.getDefaultObjectMapper(),
-                                HttpConfiguration.getDefaultHttpClient()
-                        )));
+                                HttpConfiguration.getDefaultHttpClient(),
+                                pluginParameters)));
     }
 
 }
