@@ -1,12 +1,12 @@
 plugins {
     id 'com.gradle.plugin-publish' version '1.1.0'
+    id 'idea'
 }
 
 group 'ru.krasnov.jetbrains'
 version '1.0.0'
 
 gradlePlugin {
-
     plugins {
         simplePlugin {
             id = 'ru.krasnov.jetbrains.tracking-plugin'
@@ -27,6 +27,15 @@ repositories {
     mavenCentral()
 }
 
+def integrationTest = sourceSets.create("integrationTest")
+
+idea {
+    module {
+        testSourceDirs += project.sourceSets.integrationTest.java.srcDirs
+        testSourceDirs += project.sourceSets.integrationTest.resources.srcDirs
+    }
+}
+
 dependencies {
     implementation 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
@@ -37,15 +46,30 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.14.1'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
 
-
     testImplementation 'org.projectlombok:lombok:1.18.24'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
     testImplementation 'org.mapstruct:mapstruct:1.5.3.Final'
     testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+    integrationTestImplementation(project)
+    integrationTestImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    integrationTestRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    integrationTestImplementation 'org.mockito:mockito-all:1.8.4'
 }
 
-test {
+def integrationTestTask = tasks.register("integrationTest", Test) {
+    description = 'Runs the integration tests.'
+    group = "verification"
+    testClassesDirs = integrationTest.output.classesDirs
+    classpath = integrationTest.runtimeClasspath
+    mustRunAfter(tasks.named('test'))
+}
+
+tasks.named('check') {
+    dependsOn(integrationTestTask)
+}
+tasks.withType(Test).configureEach {
     useJUnitPlatform()
 }

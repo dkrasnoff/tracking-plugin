@@ -23,18 +23,20 @@ public abstract class ExecutedTaskTrackingService
 
     @Override
     public void onFinish(FinishEvent event) {
-        if (getParameters().getBuildTracker().isPresent()) {
-            getParameters().getBuildTracker()
+        final var buildTrackerProperty = getParameters().getBuildTracker();
+        if (buildTrackerProperty.isPresent()) {
+            final var eventResult = event.getResult();
+            buildTrackerProperty
                     .get()
                     .addNewExecutedTask(
                             new ExecutedTask(
                                     event.getDescriptor().getName(),
                                     LocalDateTime.ofInstant(
-                                            Instant.ofEpochMilli(event.getResult().getStartTime()),
-                                            ZoneOffset.systemDefault()),
+                                            Instant.ofEpochMilli(eventResult.getStartTime()),
+                                            ZoneOffset.UTC),
                                     LocalDateTime.ofInstant(
-                                            Instant.ofEpochMilli(event.getResult().getEndTime()),
-                                            ZoneOffset.systemDefault())
+                                            Instant.ofEpochMilli(eventResult.getEndTime()),
+                                            ZoneOffset.UTC)
                             ));
         }
     }
