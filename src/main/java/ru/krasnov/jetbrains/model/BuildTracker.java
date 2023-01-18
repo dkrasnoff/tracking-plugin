@@ -9,6 +9,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * Main model for tracking all build process
+ */
 @ThreadSafe
 @Getter
 public class BuildTracker implements Serializable {

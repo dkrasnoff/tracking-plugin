@@ -8,6 +8,9 @@ import lombok.ToString;
 import javax.annotation.concurrent.Immutable;
 import java.io.Serializable;
 
+/**
+ * Base model for all implementations of tasks
+ */
 @Immutable
 @AllArgsConstructor
 @Getter

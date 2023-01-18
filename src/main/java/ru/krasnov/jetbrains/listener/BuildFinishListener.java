@@ -16,6 +16,9 @@ import java.util.Optional;
 
 import static ru.krasnov.jetbrains.plugin.TrackingPlugin.EXECUTED_TASK_TRACKING_SERVICE_NAME;
 
+/**
+ * This listener responsible for catching the end of the hole build and processing all collected during build data.
+ */
 @AllArgsConstructor
 public class BuildFinishListener extends BuildAdapter {
 

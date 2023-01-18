@@ -7,6 +7,9 @@ import lombok.ToString;
 import javax.annotation.concurrent.Immutable;
 import java.time.LocalDateTime;
 
+/**
+ * Model for task which already has been executed
+ */
 @Immutable
 @Getter
 @ToString(callSuper = true)

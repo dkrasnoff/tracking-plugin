@@ -13,6 +13,9 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+/**
+ * This listener is responsible for catching all executed tasks and collecting their data
+ */
 @AllArgsConstructor
 public abstract class ExecutedTaskTrackingService
         implements BuildService<ExecutedTaskTrackingService.ExecutedTaskTrackingServiceParameters>, OperationCompletionListener {
