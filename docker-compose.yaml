@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+  build-tracker-store:
+    image: dkrasn0v/build-tracker-store:1.0.0
+    container_name: build-tracker-store
+    ports:
+      - "${STORE_PUBLIC_PORT:-8080}:8080"
+    depends_on:
+      - postgres-db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      datasourceInternalUrl: "jdbc:postgresql://host.docker.internal:5432/tracking_build"
+  postgres-db:
+    image: postgres:13.5
+    container_name: postgres-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: tracking_build
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+
