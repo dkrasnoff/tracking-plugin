@@ -28,6 +28,9 @@ public class BuildTrackerFunctionalTest {
         buildFile = new File(testProjectDir, "build.gradle");
     }
 
+    /**
+     * Test checks that our plugin does not break the build
+     */
     @Test
     public void testHelloWorldTask() throws IOException {
         writeFile(settingsFile,
